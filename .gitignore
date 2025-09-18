@@ -1,0 +1,17 @@
+# Python build/cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Slicer temp
+*.py.swp
+

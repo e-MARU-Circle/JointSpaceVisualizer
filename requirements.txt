@@ -1,0 +1,7 @@
+trimesh
+numpy
+matplotlib
+pyvista
+PyQt5
+rtree
+scipy
