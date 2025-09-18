@@ -58,7 +58,7 @@ class JointSpaceVisualizerWidget(ScriptedLoadableModuleWidget, VTKObservationMix
                 'resultVisibilityCheckBox','resultOpacitySlider',
                 'maxillaVisibilityCheckBox','maxillaOpacitySlider',
                 'mandibleVisibilityCheckBox','mandibleOpacitySlider',
-                'minDistanceValueLabel'):
+                'minDistanceValueLabel','saveResultButton'):
                 if not hasattr(self.ui, name) or getattr(self.ui, name) is None:
                     setattr(self.ui, name, slicer.util.findChild(uiWidget, name))
         except Exception as e:
@@ -191,6 +191,8 @@ class JointSpaceVisualizerWidget(ScriptedLoadableModuleWidget, VTKObservationMix
                 self.ui.maxillaOpacitySlider.connect('valueChanged(double)', self.onMaxillaOpacityChanged)
             if hasattr(self.ui, 'mandibleOpacitySlider') and self.ui.mandibleOpacitySlider:
                 self.ui.mandibleOpacitySlider.connect('valueChanged(double)', self.onMandibleOpacityChanged)
+            if hasattr(self.ui, 'saveResultButton') and self.ui.saveResultButton:
+                self.ui.saveResultButton.connect('clicked(bool)', self.onSaveResult)
         except Exception as e:
             logging.warning(f"Display control wiring failed: {e}")
 
@@ -282,6 +284,31 @@ class JointSpaceVisualizerWidget(ScriptedLoadableModuleWidget, VTKObservationMix
                 slider.enabled = hasNode
                 if hasNode and node.GetDisplayNode():
                     slider.value = float(node.GetDisplayNode().GetOpacity()) * 100.0
+        # Save button state
+        if hasattr(self.ui, 'saveResultButton') and self.ui.saveResultButton:
+            self.ui.saveResultButton.enabled = self._getResultNode() is not None
+
+    def onSaveResult(self, *_):
+        import qt, os
+        node = self._getResultNode()
+        if not node:
+            slicer.util.infoDisplay('No result model to save yet. Please run Apply first.')
+            return
+        # Suggest a safe default (VTP preserves scalars). STL may drop scalars.
+        defaultName = f"{node.GetName()}.vtp"
+        filters = "VTP (*.vtp);;VTK (*.vtk);;PLY (*.ply);;STL (*.stl)"
+        outPath = qt.QFileDialog.getSaveFileName(slicer.util.mainWindow(), 'Save Result Model', os.path.join(os.path.expanduser('~'), defaultName), filters)
+        if not outPath:
+            return
+        try:
+            ok = slicer.util.saveNode(node, outPath)
+            if not ok:
+                raise RuntimeError('saveNode returned False')
+            # Warn if STL chosen (may not preserve scalars)
+            if outPath.lower().endswith('.stl'):
+                slicer.util.infoDisplay('Saved as STL. Note: STL does not store per-point scalars. Use VTP/VTK/PLY to preserve the Distance data.')
+        except Exception as e:
+            slicer.util.errorDisplay(f"Failed to save: {e}")
 
 #
 # JointSpaceVisualizerLogic
