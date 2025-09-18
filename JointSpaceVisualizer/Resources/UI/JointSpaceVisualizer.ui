@@ -169,7 +169,7 @@
       <item row="0" column="1">
        <widget class="QLabel" name="scaleInfoLabel">
         <property name="text">
-         <string>0–1.0 mm: Red → 2.5 mm: Yellow → 3.25 mm: Green → 4–5 mm: Blue</string>
+         <string>0–1.0 mm: Red → 1.6 mm: Yellow → 3.25 mm: Green → 4–5 mm: Blue</string>
         </property>
        </widget>
       </item>

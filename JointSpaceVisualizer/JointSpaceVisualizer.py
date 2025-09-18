@@ -468,8 +468,8 @@ class JointSpaceVisualizerLogic(ScriptedLoadableModuleLogic):
             # Keep red flat from 0 to 1.0 mm
             ctf.AddRGBPoint(0.0, 1.0, 0.0, 0.0)    # red
             ctf.AddRGBPoint(1.0, 1.0, 0.0, 0.0)    # red (flat until 1.0)
-            # Transition through yellow and green between 1.5 and 4.0 mm
-            ctf.AddRGBPoint(2.5, 1.0, 1.0, 0.0)    # yellow
+            # Transition through yellow and green between 1.0 and 4.0 mm
+            ctf.AddRGBPoint(1.6, 1.0, 1.0, 0.0)    # yellow at 1.6 mm
             ctf.AddRGBPoint(3.25, 0.0, 1.0, 0.0)   # green
             # Clamp to blue from 4.0 mm upwards
             ctf.AddRGBPoint(4.0, 0.0, 0.0, 1.0)    # blue
